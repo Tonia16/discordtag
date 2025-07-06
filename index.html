@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Convertitore di Tag Discord - Tonia Shop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom, #1e1e2f, #12121c);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 1rem;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    header img.logo {
+      width: 100px;
+      height: auto;
+      margin-bottom: 1rem;
+    }
+
+    header img.banner {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-top: 1rem;
+      color: #f3c623;
+    }
+
+    p.description {
+      margin: 1rem 0 2rem;
+      font-size: 1.1rem;
+      color: #cccccc;
+    }
+
+    .form-group {
+      background: #2a2a3d;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+      text-align: left;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      display: block;
+      margin-top: 1rem;
+    }
+
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-size: 1rem;
+      margin-top: 0.3rem;
+    }
+
+    .form-group input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+
+    .form-group button {
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #f3c623;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .form-group button:hover {
+      background-color: #ffd93d;
+    }
+
+    .results-container {
+      margin-top: 2rem;
+      background: #1f1f2e;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    .results-container div {
+      padding: 0.3rem 0;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #333;
+    }
+
+    footer {
+      margin: 3rem 0 1rem;
+      font-size: 0.95rem;
+      color: #888;
+    }
+
+    footer a {
+      color: #f3c623;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="logo.png" alt="Logo" class="logo">
+      <img src="banner.gif" alt="Banner" class="banner">
+      <h1>Convertitore di Tag Discord</h1>
+      <p class="description">
+        Hai un server discord e vuoi creare la tua server tag, ma è composta da 5 lettere invece di 4? Ecco per te la soluzione: il nostro convertitore di tag da 5 a 4 caratteri per Discord. Utile per creare tag che hanno 5 caratteri invece di 4 e rendere ancora più unica la tag del tuo server discord. Su Tonia Shop troverai la dimostrazione e la guida su come utilizzarlo!
+      </p>
+    </header>
+
+    <div class="form-group">
+      <label for="input">Inserisci il testo:</label>
+      <input type="text" id="input" placeholder="Es: TOXIC, ff, GHz, TM...">
+
+      <label><input type="checkbox" id="ignoreCase"> Ignora Maiuscole/Minuscole</label>
+      <label><input type="checkbox" id="allowVisual"> Consenti Simili Visivi</label>
+
+      <button onclick="shrink()">Genera</button>
+    </div>
+
+    <div class="results-container" id="results">
+      <div>Nessun risultato ancora.</div>
+    </div>
+
+    <footer>
+      Creato con 💚 da <strong>Tonia Shop</strong> — <a href="https://discord.gg/toniashop" target="_blank">Unisciti al nostro Discord</a>
+    </footer>
+  </div>
+
+  <script>
+    const ligatures = {
+      "IJ": ["\u0132"], "ij": ["\u0133"], "LJ": ["\u01c7"], "Lj": ["\u01c8"], "lj": ["\u01c9"],
+      "NJ": ["\u01ca"], "Nj": ["\u01cb"], "nj": ["\u01cc"], "DZ": ["\u01f1"], "Dz": ["\u01f2"],
+      "dz": ["\u01f3"], "Rs": ["\u20a8"], "No": ["\u2116"], "SM": ["\u2120"], "TEL": ["\u2121"],
+      "TM": ["\u2122"], "FAX": ["\u213b"], "II": ["\u2161"], "III": ["\u2162"], "IV": ["\u2163"],
+      "VI": ["\u2165"], "VII": ["\u2166"], "VIII": ["\u2167"], "IX": ["\u2168"], "XI": ["\u216a"],
+      "XII": ["\u216b"], "ii": ["\u2171"], "iii": ["\u2172"], "iv": ["\u2173"], "vi": ["\u2175"],
+      "vii": ["\u2176"], "viii": ["\u2177"], "ix": ["\u2178"], "xi": ["\u217a"], "xii": ["\u217b"],
+      "PTE": ["\u3250"], "Hg": ["\u32cc"], "erg": ["\u32cd"], "eV": ["\u32ce"], "LTD": ["\u32cf"],
+      "hPa": ["\u3371"], "da": ["\u3372"], "AU": ["\u3373"], "bar": ["\u3374"], "oV": ["\u3375"],
+      "pc": ["\u3376"], "dm": ["\u3377"], "IU": ["\u337a"], "pA": ["\u3380"], "nA": ["\u3381"],
+      "mA": ["\u3383"], "kA": ["\u3384"], "KB": ["\u3385"], "MB": ["\u3386"], "GB": ["\u3387"],
+      "cal": ["\u3388"], "kcal": ["\u3389"], "pF": ["\u338a"], "nF": ["\u338b"], "mg": ["\u338e"],
+      "kg": ["\u338f"], "Hz": ["\u3390"], "kHz": ["\u3391"], "MHz": ["\u3392"], "GHz": ["\u3393"],
+      "THz": ["\u3394"], "ml": ["\u3396"], "dl": ["\u3397"], "kl": ["\u3398"], "fm": ["\u3399"],
+      "nm": ["\u339a"], "mm": ["\u339c"], "cm": ["\u339d"], "km": ["\u339e"], "Pa": ["\u33a9"],
+      "kPa": ["\u33aa"], "MPa": ["\u33ab"], "GPa": ["\u33ac"], "rad": ["\u33ad"], "ps": ["\u33b0"],
+      "ns": ["\u33b1"], "ms": ["\u33b3"], "pV": ["\u33b4"], "nV": ["\u33b5"], "mV": ["\u33b7"],
+      "kV": ["\u33b8"], "MV": ["\u33b9"], "GW": ["\u33ba"], "TW": ["\u33bb"], "fA": ["\u33bc"],
+      "cA": ["\u33bd"], "pC": ["\u33be"], "nC": ["\u33bf"], "uC": ["\u33c0"], "mC": ["\u33c1"],
+      "kC": ["\u33c2"], "V": ["\u33c3"]
+    };
+
+    const visualMap = {
+      'i': ['l', '1', '|', '!', 'ɩ'],
+      'l': ['i', '1', '|', '!'],
+      '1': ['i', 'l', '|', '!'],
+      '|': ['i', 'l', '1'],
+      '!': ['i', 'l', '1'],
+
+      'o': ['0', 'O', '°', '●'],
+      '0': ['o', 'O'],
+      'O': ['o', '0'],
+
+      'a': ['@'],
+      's': ['$', '5'],
+      '$': ['s', '5'],
+      '5': ['s', '$'],
+
+      'e': ['3', '€'],
+      '3': ['e'],
+      '€': ['e'],
+
+      'b': ['8'],
+      '8': ['b'],
+
+      'c': ['¢'],
+      '¢': ['c'],
+
+      'g': ['9'],
+      '9': ['g']
+    };
+
+    function getVisualSubs(char) {
+      return visualMap[char] || [];
+    }
+
+    function shrink() {
+      const input = document.getElementById('input').value;
+      const ignoreCase = document.getElementById('ignoreCase').checked;
+      const allowVisual = document.getElementById('allowVisual').checked;
+      const variants = new Set();
+
+      const keys = Object.keys(ligatures);
+      const searchKeys = ignoreCase ? keys.map(k => k.toLowerCase()) : keys;
+      const map = {};
+      for (let i = 0; i < searchKeys.length; i++) {
+        map[searchKeys[i]] = ligatures[keys[i]];
+      }
+
+      function recurse(str, built) {
+        if (built.length > 4) return;
+        if (str.length === 0) {
+          variants.add(built);
+          return;
+        }
+
+        for (let len = 5; len >= 1; len--) {
+          if (len > str.length) continue;
+          const sub = str.slice(0, len);
+          const subKey = ignoreCase ? sub.toLowerCase() : sub;
+          if (map[subKey]) {
+            for (const rep of map[subKey]) {
+              recurse(str.slice(len), built + rep);
+            }
+          }
+        }
+
+        const char = str[0];
+        recurse(str.slice(1), built + char);
+        if (allowVisual) {
+          const visSubs = getVisualSubs(char.toLowerCase());
+          for (const alt of visSubs) {
+            recurse(str.slice(1), built + alt);
+          }
+        }
+      }
+
+      recurse(input, "");
+      const results = Array.from(variants).filter(x => x.length <= 4);
+      document.getElementById('results').innerHTML = results.length ? results.map(x => `<div>${x}</div>`).join("") : "<div>No results found.</div>";
+    }
+  </script>
+</body>
+</html>
